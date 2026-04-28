@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const announcer = document.getElementById("announcer");
     const restartBtn = document.getElementById("restart");
 
-    let cards = [];
     let chosenCards = [];
     let chosenIds = [];
     let matchCount = 0;
     let lockBoard = false;
+    let cards = [];
 
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -37,6 +37,56 @@ document.addEventListener("DOMContentLoaded", () => {
     function announce(message) {
         announcer.textContent = "";
         requestAnimationFrame(() => { announcer.textContent = message; });
+    }
+
+    function flipCard(event) {
+        if (lockBoard) return;
+        const btn = event.currentTarget;
+        const id = Number(btn.dataset.id);
+        if (chosenIds.includes(id)) return;
+
+        chosenCards.push(cards[id].name);
+        chosenIds.push(id);
+        btn.querySelector("img").src = cards[id].img;
+        btn.setAttribute("aria-label", cards[id].name);
+
+        if (chosenCards.length === 2) {
+            lockBoard = true;
+            setTimeout(checkForMatch, FLIP_DELAY_MS);
+        }
+    }
+
+    function checkForMatch() {
+        const buttons = grid.querySelectorAll("button");
+        const [idA, idB] = chosenIds;
+        const isMatch = chosenCards[0] === chosenCards[1];
+
+        if (isMatch) {
+            matchCount++;
+            [idA, idB].forEach((id, i) => {
+                const btn = buttons[id];
+                btn.querySelector("img").src = BLANK_URL;
+                btn.setAttribute("aria-label", `${chosenCards[i]} — matched`);
+                btn.disabled = true;
+            });
+            announce(`Matched ${chosenCards[0]}!`);
+        } else {
+            [idA, idB].forEach((id) => {
+                const btn = buttons[id];
+                btn.querySelector("img").src = CARD_BACK_URL;
+                btn.setAttribute("aria-label", "Face-down card");
+            });
+            announce("No match.");
+        }
+
+        chosenCards = [];
+        chosenIds = [];
+        lockBoard = false;
+
+        resultDisplay.textContent = matchCount === TOTAL_PAIRS ? "You won!" : matchCount;
+        if (matchCount === TOTAL_PAIRS) {
+            announce("Congratulations, you matched all pairs!");
+        }
     }
 
     function createBoard() {
@@ -63,57 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.appendChild(img);
             grid.appendChild(btn);
         });
-    }
 
-    function checkForMatch() {
-        const buttons = grid.querySelectorAll("button");
-        const [idA, idB] = chosenIds;
-
-        if (chosenCards[0] === chosenCards[1]) {
-            buttons[idA].querySelector("img").src = BLANK_URL;
-            buttons[idB].querySelector("img").src = BLANK_URL;
-            buttons[idA].classList.add("matched");
-            buttons[idB].classList.add("matched");
-            buttons[idA].setAttribute("aria-label", `${chosenCards[0]} — matched`);
-            buttons[idB].setAttribute("aria-label", `${chosenCards[1]} — matched`);
-            buttons[idA].disabled = true;
-            buttons[idB].disabled = true;
-            matchCount++;
-            announce(`Matched ${chosenCards[0]}!`);
-        } else {
-            buttons[idA].querySelector("img").src = CARD_BACK_URL;
-            buttons[idB].querySelector("img").src = CARD_BACK_URL;
-            buttons[idA].setAttribute("aria-label", "Face-down card");
-            buttons[idB].setAttribute("aria-label", "Face-down card");
-            announce("No match.");
-        }
-
-        chosenCards = [];
-        chosenIds = [];
-        lockBoard = false;
-
-        if (matchCount === TOTAL_PAIRS) {
-            resultDisplay.textContent = "You won!";
-            announce("Congratulations, you matched all pairs!");
-        } else {
-            resultDisplay.textContent = matchCount;
-        }
-    }
-
-    function flipCard() {
-        if (lockBoard) return;
-        const id = Number(this.dataset.id);
-        if (chosenIds.includes(id)) return;
-
-        chosenCards.push(cards[id].name);
-        chosenIds.push(id);
-        this.querySelector("img").src = cards[id].img;
-        this.setAttribute("aria-label", cards[id].name);
-
-        if (chosenCards.length === 2) {
-            lockBoard = true;
-            setTimeout(checkForMatch, FLIP_DELAY_MS);
-        }
+        announce("Board reset. Find all matching pairs!");
     }
 
     restartBtn.addEventListener("click", createBoard);
