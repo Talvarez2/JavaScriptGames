@@ -20,14 +20,16 @@ npx serve .
 | `style.css` | Landing page styles |
 | `memoryGame/memoryGame.html` | Memory game page |
 | `memoryGame/style.css` | Memory game styles |
-| `memoryGame/app.js` | Memory game logic (card shuffle, flip, match) |
+| `memoryGame/app.js` | Memory game logic (card shuffle, flip, match, restart) |
 
 ## Coding Conventions
 
 - Vanilla HTML/CSS/JS only — no frameworks or build tools
-- `const`/`let` over `var`; no globals
+- `const`/`let` over `var`; no globals leaked (all code inside `DOMContentLoaded`)
 - Semantic HTML elements (`main`, `nav`, `h1`) with proper heading hierarchy
-- Accessibility: `alt` text on images, `aria-live` for dynamic content, `aria-label` on landmark regions
+- Accessibility: `aria-label` on interactive elements, `aria-live` for dynamic content, screen reader announcements for game events, `focus-visible` outlines
+- Cards rendered as `<button>` elements for keyboard accessibility
 - CSS: `box-sizing: border-box` reset, `system-ui` font stack, CSS Grid/Flexbox for layout
 - Each game lives in its own directory with its own HTML, CSS, and JS files
-- Script tags placed at end of `<body>` (no `defer`/`async` needed for inline scripts)
+- Script tags placed at end of `<body>` (no `defer`/`async` needed)
+- Magic numbers extracted to named constants (e.g., `FLIP_DELAY_MS`)
