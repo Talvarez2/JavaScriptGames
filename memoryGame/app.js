@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const BLANK_URL =
         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_Blank.svg/320px-Flag_Blank.svg.png";
     const FLIP_DELAY_MS = 500;
+    const TOTAL_PAIRS = 6;
 
     const cardArray = [
         { name: "Python", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" },
@@ -35,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function announce(message) {
         announcer.textContent = "";
-        // Force screen reader to re-announce by toggling content
         requestAnimationFrame(() => { announcer.textContent = message; });
     }
 
@@ -76,8 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
             buttons[idB].classList.add("matched");
             buttons[idA].setAttribute("aria-label", `${chosenCards[0]} — matched`);
             buttons[idB].setAttribute("aria-label", `${chosenCards[1]} — matched`);
-            buttons[idA].removeEventListener("click", flipCard);
-            buttons[idB].removeEventListener("click", flipCard);
+            buttons[idA].disabled = true;
+            buttons[idB].disabled = true;
             matchCount++;
             announce(`Matched ${chosenCards[0]}!`);
         } else {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chosenIds = [];
         lockBoard = false;
 
-        if (matchCount === cardArray.length) {
+        if (matchCount === TOTAL_PAIRS) {
             resultDisplay.textContent = "You won!";
             announce("Congratulations, you matched all pairs!");
         } else {

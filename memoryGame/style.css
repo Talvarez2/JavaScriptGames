@@ -53,7 +53,7 @@ h1 {
     outline-offset: 2px;
 }
 
-.grid button.matched {
+.grid button:disabled {
     opacity: 0.4;
     cursor: default;
 }
@@ -87,6 +87,8 @@ h1 {
 .controls button:hover,
 .controls button:focus-visible {
     background-color: #357abd;
+    outline: 2px solid #357abd;
+    outline-offset: 2px;
 }
 
 .controls a {
@@ -97,6 +99,8 @@ h1 {
 .controls a:hover,
 .controls a:focus-visible {
     text-decoration: underline;
+    outline: 2px solid #357abd;
+    outline-offset: 2px;
 }
 
 .sr-only {

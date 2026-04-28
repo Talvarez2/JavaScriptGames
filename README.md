@@ -37,7 +37,8 @@ memoryGame/
 ## Accessibility
 
 - Cards are focusable buttons with descriptive `aria-label` attributes
-- Score updates use `aria-live="polite"` for screen reader announcements
+- Matched cards are disabled via the `disabled` attribute
+- Score updates use `aria-live="polite"` with `role="status"` for screen reader announcements
 - Card flips and match results are announced via an `aria-live="assertive"` region
 - Focus-visible outlines on all interactive elements
 - Responsive grid layout for smaller screens
